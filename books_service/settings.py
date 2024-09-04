@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "books",
     "user",
+    "borrow",
     "rest_framework_simplejwt",
 ]
 
