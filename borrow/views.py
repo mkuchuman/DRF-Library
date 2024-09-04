@@ -7,5 +7,5 @@ from borrow.serializers import BorrowReadSerializer
 
 # Create your views here.
 class BorrowViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, GenericViewSet):
-    queryset = Borrow.objects.select_related('book', 'user').all()
+    queryset = Borrow.objects.select_related("book", "user").all()
     serializer_class = BorrowReadSerializer

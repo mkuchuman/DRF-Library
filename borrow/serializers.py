@@ -9,10 +9,11 @@ class BorrowReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Borrow
-        fields = ("id",
-                  "borrow_date",
-                  "expected_return_date",
-                  "actual_return_date",
-                  "book",
-                  "user",
-                  )
+        fields = (
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "user",
+        )

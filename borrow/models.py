@@ -13,6 +13,8 @@ class Borrow(models.Model):
 
     class Meta:
         constraints = [
-            models.CheckConstraint(check=models.Q(borrow_date__lte=models.F('expected_return_date')),
-                                   name='check_borrow_date_before_return_date')
+            models.CheckConstraint(
+                check=models.Q(borrow_date__lte=models.F("expected_return_date")),
+                name="check_borrow_date_before_return_date",
+            )
         ]
