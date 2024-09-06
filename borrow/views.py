@@ -38,3 +38,22 @@ class BorrowViewSet(
 
         return queryset
 
+    @action(detail=True, methods=["post"], url_path="return")
+    def return_book(self, request, pk=None):
+        borrow = self.get_object()
+
+        if borrow.actual_return_date:
+            return Response(
+                {"detail": "The book is already returned."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = self.get_serializer(
+            borrow,
+            data={"actual_return_date": request.data["actual_return_date"]},
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({"detail": "The book was successfully returned."})
