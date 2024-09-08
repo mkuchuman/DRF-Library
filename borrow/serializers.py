@@ -1,8 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
-
+from telegram_helper import send_message
 from books.models import Book
-from books.serializers import BookSerializer
 from borrow.models import Borrow
 from user.serializers import UserSerializer
 
@@ -36,6 +35,10 @@ class BorrowSerializer(serializers.ModelSerializer):
 
             book.inventory -= 1
             book.save()
+            message = f"""
+            The book {book.title} has been borrowed by {user.email}"""
+            send_message(message)
+
 
             borrow = Borrow.objects.create(user=user, **validated_data)
             return borrow
