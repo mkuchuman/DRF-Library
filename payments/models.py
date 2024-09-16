@@ -25,6 +25,6 @@ class Payment(models.Model):
         default=PaymentType.PAYMENT
     )
     borrowing = models.ForeignKey(Borrow, on_delete=models.CASCADE)
-    session_url = models.URLField(max_length=200)
+    session_url = models.URLField(max_length=255)
     session_id = models.CharField(max_length=255)
     amount = models.DecimalField(max_digits=10, decimal_places=2)

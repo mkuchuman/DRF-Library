@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "books",
     "user",
     "borrow",
-    "payments"
+    "payments",
     "rest_framework_simplejwt",
     "django_q"
 ]
