@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "user",
     "borrow",
     "rest_framework_simplejwt",
+    "django_q"
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,14 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = "user.User"
+
+Q_CLUSTER = {
+    'name': 'DjangoQ',
+    'workers': 1,
+    'timeout': 90,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default',
+}
+
