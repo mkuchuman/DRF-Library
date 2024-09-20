@@ -17,7 +17,7 @@ class PaymentViewSet(GenericViewSet, mixins.RetrieveModelMixin, mixins.UpdateMod
         if self.request.user.is_staff:
             return queryset
         else:
-            queryset = queryset.filter(user=self.request.user)
+            queryset = queryset.filter(borrowing__user=self.request.user)
         return queryset
 
     @action(detail=False, methods=["get"], url_path="success")
