@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 
 import stripe
 
@@ -10,7 +10,7 @@ def calculate_price(borrow):
     if borrow.actual_return_date:
         date = borrow.actual_return_date
     else:
-        date = datetime.now().date()
+        date = timezone.now().date()
     days = (date - borrow.borrow_date).days
     total_price = days * borrow.book.daily_fee
 
