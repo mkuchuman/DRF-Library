@@ -1,5 +1,8 @@
 from django.db import transaction
 from rest_framework import serializers
+from payments.helper import create_stripe_payment
+from payments.models import Payment
+from payments.serializers import PaymentSerializer
 from telegram_helper import send_message
 from books.models import Book
 from borrow.models import Borrow
@@ -11,6 +14,7 @@ class BorrowSerializer(serializers.ModelSerializer):
         queryset=Book.objects.all()
     )
     user = UserSerializer(read_only=True)
+    payments = serializers.SerializerMethodField()
 
     class Meta:
         model = Borrow
@@ -21,6 +25,7 @@ class BorrowSerializer(serializers.ModelSerializer):
             "actual_return_date",
             "book",
             "user",
+            "payments"
         )
 
     def validate_book(self, book):
@@ -39,9 +44,9 @@ class BorrowSerializer(serializers.ModelSerializer):
             The book {book.title} has been borrowed by {user.email}"""
             send_message(message)
 
-
             borrow = Borrow.objects.create(user=user, **validated_data)
-            return borrow
+            payment = create_stripe_payment(borrow)
+            return payment.session_url
 
     def update(self, instance, validated_data):
         if (
@@ -52,3 +57,7 @@ class BorrowSerializer(serializers.ModelSerializer):
             instance.book.save()
 
         return super().update(instance, validated_data)
+
+    def get_payments(self, obj):
+        payments = Payment.objects.filter(borrowing=obj)
+        return PaymentSerializer(payments, many=True).data
