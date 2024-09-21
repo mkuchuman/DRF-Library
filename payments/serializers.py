@@ -1,10 +1,8 @@
 from rest_framework import serializers
-from borrow.serializers import BorrowSerializer
 from payments.models import Payment
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    borrowing = BorrowSerializer()
 
     class Meta:
         model = Payment
