@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-
+from django.http import HttpResponseRedirect
 from borrow.models import Borrow
 from borrow.serializers import BorrowSerializer
 
@@ -28,7 +28,6 @@ class BorrowViewSet(
                 queryset = queryset.filter(actual_return_date__isnull=True)
             elif is_active.lower() == "false":
                 queryset = queryset.filter(actual_return_date__isnull=False)
-        # Не проверенно
         if self.request.user.is_staff:
             user_id = self.request.query_params.get("user_id")
             if user_id:
@@ -57,3 +56,12 @@ class BorrowViewSet(
         serializer.save()
 
         return Response({"detail": "The book was successfully returned."})
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        session_url = serializer.save()
+
+        return HttpResponseRedirect(redirect_to=session_url)
+
