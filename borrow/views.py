@@ -6,6 +6,7 @@ from rest_framework.viewsets import GenericViewSet
 from django.http import HttpResponseRedirect
 from borrow.models import Borrow
 from borrow.serializers import BorrowSerializer
+from payments.helper import create_stripe_payment
 
 
 # Create your views here.
@@ -54,7 +55,9 @@ class BorrowViewSet(
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
+        if borrow.actual_return_date > borrow.expected_return_date:
+            payment = create_stripe_payment(borrow)
+            return HttpResponseRedirect(redirect_to=payment.session_url)
         return Response({"detail": "The book was successfully returned."})
 
     def create(self, request, *args, **kwargs):
