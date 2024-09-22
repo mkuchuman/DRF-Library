@@ -10,9 +10,7 @@ from user.serializers import UserSerializer
 
 
 class BorrowSerializer(serializers.ModelSerializer):
-    book = serializers.PrimaryKeyRelatedField(
-        queryset=Book.objects.all()
-    )
+    book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
     user = UserSerializer(read_only=True)
     payments = serializers.SerializerMethodField()
 
@@ -25,7 +23,7 @@ class BorrowSerializer(serializers.ModelSerializer):
             "actual_return_date",
             "book",
             "user",
-            "payments"
+            "payments",
         )
 
     def validate_book(self, book):

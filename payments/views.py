@@ -11,7 +11,12 @@ from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
 
 
-class PaymentViewSet(GenericViewSet, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin):
+class PaymentViewSet(
+    GenericViewSet,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+):
     queryset = Payment.objects.select_related("borrowing")
     serializer_class = PaymentSerializer
     permission_classes = (IsAuthenticated,)
@@ -55,4 +60,6 @@ def successful_payment(request, session_id):
 
 
 def cancelled_payment(request):
-    return HttpResponse("Payment was canceled. You can pay later , the session is available for only 24 hours")
+    return HttpResponse(
+        "Payment was canceled. You can pay later , the session is available for only 24 hours"
+    )

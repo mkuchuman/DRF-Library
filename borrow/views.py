@@ -67,4 +67,3 @@ class BorrowViewSet(
         session_url = serializer.save()
 
         return HttpResponseRedirect(redirect_to=session_url)
-
