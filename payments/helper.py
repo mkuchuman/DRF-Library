@@ -1,7 +1,7 @@
+from django.http import HttpRequest
+from django.urls import reverse
 from django.utils import timezone
-
 import stripe
-
 from books_service import settings
 from payments.models import Payment
 
@@ -10,13 +10,13 @@ def calculate_price(borrow):
     if borrow.actual_return_date:
         date = borrow.actual_return_date
     else:
-        date = timezone.now().date()
+        date = borrow.expected_return_date
     days = (date - borrow.borrow_date).days
     total_price = days * borrow.book.daily_fee
 
     if borrow.expected_return_date < date:
         overdue_days = (date - borrow.expected_return_date).days
-        total_price += overdue_days * borrow.book.daily_fee * 2
+        total_price = overdue_days * borrow.book.daily_fee * 2
     return total_price
 
 
@@ -27,8 +27,8 @@ def create_stripe_payment(borrow):
     price = calculate_price(borrow)
     session = stripe.checkout.Session.create(
         mode="payment",
-        success_url="https://example.com/success",
-        cancel_url="https://example.com/cancel",
+        success_url="http://127.0.0.1:8000/api/payments/payment-succes/{CHECKOUT_SESSION_ID}/",
+        cancel_url="http://127.0.0.1:8000/api/payments/payment-cancelled/",
         line_items=[
             {
                 "price_data": {
@@ -42,6 +42,7 @@ def create_stripe_payment(borrow):
             }
         ],
     )
+
     payment = Payment.objects.create(
         status=Payment.PaymentStatus.PENDING,
         type=Payment.PaymentType.PAYMENT,
@@ -50,5 +51,8 @@ def create_stripe_payment(borrow):
         session_id=session.id,
         amount=price,
     )
+    if borrow.expected_return_date < borrow.actual_return_date:
+        payment.type = Payment.PaymentType.FINE
+        payment.save()
 
     return payment
