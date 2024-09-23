@@ -51,8 +51,8 @@ def create_stripe_payment(borrow):
         session_id=session.id,
         amount=price,
     )
-    if borrow.expected_return_date < borrow.actual_return_date:
-        payment.type = Payment.PaymentType.FINE
-        payment.save()
+    if borrow.actual_return_date and borrow.expected_return_date < borrow.actual_return_date:
+            payment.type = Payment.PaymentType.FINE
+            payment.save()
 
     return payment
